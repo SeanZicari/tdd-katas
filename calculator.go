@@ -2,14 +2,14 @@ package string_calculator_kata
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
 func Add(numbers string) (int, error) {
-	delimiters, numbers := deriveDelimiter(numbers)
-	numSlice := strings.FieldsFunc(numbers, setDelimiters(delimiters))
-	return sumNumbers(numSlice)
+	delimiter, numbers := deriveDelimiter(numbers)
+	return sumNumbers(delimiter.Split(numbers, -1))
 }
 
 func sumNumbers(nums []string) (int, error) {
@@ -28,34 +28,38 @@ func sumNumbers(nums []string) (int, error) {
 		sum += num
 	}
 
+	return sum, errIfNegatives(negatives, err)
+}
+
+func errIfNegatives(negatives []string, err error) error {
 	if len(negatives) > 0 {
 		err = fmt.Errorf("negative numbers not allowed: %s", strings.Join(negatives, ", "))
 	}
-
-	return sum, err
+	return err
 }
 
-func deriveDelimiter(numbers string) ([]rune, string) {
-	var delimiters []rune
+func deriveDelimiter(numbers string) (*regexp.Regexp, string) {
+	var delimiters []string
 
 	if strings.HasPrefix(numbers, "//") {
 		pieces := strings.Split(numbers, "\n")
-		delimiter := rune(pieces[0][len(pieces[0])-1])
-		delimiters = []rune{delimiter}
+
+		re := regexp.MustCompile(`[^\/\/\[\]]+`)
+		delimiters = re.FindAllString(pieces[0], -1)
 		numbers = pieces[1]
 	} else {
-		delimiters = []rune{'\n', ','}
+		delimiters = []string{"\n", ","}
 	}
-	return delimiters, numbers
+
+	return regexp.MustCompile(strings.Join(escapeRegexSpecialChars(delimiters), "|")), numbers
 }
 
-func setDelimiters(delimiters []rune) func(r rune) bool {
-	return func(r rune) bool {
-		for _, d := range delimiters {
-			if r == d {
-				return true
-			}
-		}
-		return false
+func escapeRegexSpecialChars(delimiters []string) []string {
+	var escapedDelimiters []string
+
+	for _, delim := range delimiters {
+		escapedDelimiters = append(escapedDelimiters, regexp.QuoteMeta(delim))
 	}
+
+	return escapedDelimiters
 }

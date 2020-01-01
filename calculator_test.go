@@ -76,3 +76,19 @@ func TestAdd_NumbersBiggerThan1000Ignored(t *testing.T) {
 
 	assert.Equal(2, res)
 }
+
+func TestAdd_CustomDelimiterOfAnyType(t *testing.T) {
+	assert := assert2.New(t)
+
+	res, _ := Add("//[***]\n1***2***3")
+
+	assert.Equal(6, res)
+}
+
+func TestAdd_CustomDelimitersOfAnyTypeAndLength(t *testing.T) {
+	assert := assert2.New(t)
+
+	res, _ := Add("//[***][---]\n11***12---13")
+
+	assert.Equal(36, res)
+}

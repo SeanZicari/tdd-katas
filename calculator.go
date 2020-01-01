@@ -13,15 +13,26 @@ func Add(numbers string) (int, error) {
 }
 
 func sumNumbers(nums []string) (int, error) {
+	var negatives []string
+	var err error
+
 	sum := 0
 	for _, numStr := range nums {
 		num, _ := strconv.Atoi(numStr)
 		if num < 0 {
-			return 0, fmt.Errorf("negative numbers not allowed: %d", num)
+			negatives = append(negatives, numStr)
+		}
+		if num > 1000 {
+			continue
 		}
 		sum += num
 	}
-	return sum, nil
+
+	if len(negatives) > 0 {
+		err = fmt.Errorf("negative numbers not allowed: %s", strings.Join(negatives, ", "))
+	}
+
+	return sum, err
 }
 
 func deriveDelimiter(numbers string) ([]rune, string) {

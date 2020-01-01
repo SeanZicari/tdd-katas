@@ -58,6 +58,21 @@ func TestAdd_NegativeNumberReturnsError(t *testing.T) {
 
 	_, err := Add("-1,2")
 
-	assert.NotNil(err)
-	//assert.Equal("negative numbers not allowed: -1", err.Error())
+	assert.Equal("negative numbers not allowed: -1", err.Error())
+}
+
+func TestAdd_AllNegativeNumbersShownInError(t *testing.T) {
+	assert := assert2.New(t)
+
+	_, err := Add("-1,2,-3")
+
+	assert.Equal("negative numbers not allowed: -1, -3", err.Error())
+}
+
+func TestAdd_NumbersBiggerThan1000Ignored(t *testing.T) {
+	assert := assert2.New(t)
+
+	res, _ := Add("2,1001")
+
+	assert.Equal(2, res)
 }

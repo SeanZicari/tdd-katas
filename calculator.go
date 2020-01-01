@@ -8,7 +8,7 @@ import (
 )
 
 func Add(numbers string) (int, error) {
-	delimiter, numbers := deriveDelimiter(numbers)
+	delimiter, numbers := deriveDelimiters(numbers)
 	return sumNumbers(delimiter.Split(numbers, -1))
 }
 
@@ -38,13 +38,13 @@ func errIfNegatives(negatives []string, err error) error {
 	return err
 }
 
-func deriveDelimiter(numbers string) (*regexp.Regexp, string) {
+func deriveDelimiters(numbers string) (*regexp.Regexp, string) {
 	var delimiters []string
 
 	if strings.HasPrefix(numbers, "//") {
 		pieces := strings.Split(numbers, "\n")
 
-		re := regexp.MustCompile(`[^\/\/\[\]]+`)
+		re := regexp.MustCompile(`[^/\[\]]+`)
 		delimiters = re.FindAllString(pieces[0], -1)
 		numbers = pieces[1]
 	} else {

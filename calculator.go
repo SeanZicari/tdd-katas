@@ -6,11 +6,9 @@ import (
 	"strings"
 )
 
-var delimiters = []rune{'\n', ','}
-
 func Add(numbers string) (int, error) {
-	numbers = deriveDelimiter(numbers)
-	numSlice := strings.FieldsFunc(numbers, customDelimiter)
+	delimiters, numbers := deriveDelimiter(numbers)
+	numSlice := strings.FieldsFunc(numbers, setDelimiters(delimiters))
 	return sumNumbers(numSlice)
 }
 
@@ -26,21 +24,27 @@ func sumNumbers(nums []string) (int, error) {
 	return sum, nil
 }
 
-func deriveDelimiter(numbers string) string {
+func deriveDelimiter(numbers string) ([]rune, string) {
+	var delimiters []rune
+
 	if strings.HasPrefix(numbers, "//") {
 		pieces := strings.Split(numbers, "\n")
 		delimiter := rune(pieces[0][len(pieces[0])-1])
 		delimiters = []rune{delimiter}
-		return pieces[1]
+		numbers = pieces[1]
+	} else {
+		delimiters = []rune{'\n', ','}
 	}
-	return numbers
+	return delimiters, numbers
 }
 
-func customDelimiter(r rune) bool {
-	for _, d := range delimiters {
-		if r == d {
-			return true
+func setDelimiters(delimiters []rune) func(r rune) bool {
+	return func(r rune) bool {
+		for _, d := range delimiters {
+			if r == d {
+				return true
+			}
 		}
+		return false
 	}
-	return false
 }

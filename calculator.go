@@ -31,12 +31,10 @@ func sumNumbers(nums []string) (int, error) {
 }
 
 func errIfNegatives(negatives []string) error {
-	var err error
-
 	if len(negatives) > 0 {
-		err = fmt.Errorf("negative numbers not allowed: %s", strings.Join(negatives, ", "))
+		return fmt.Errorf("negative numbers not allowed: %s", strings.Join(negatives, ", "))
 	}
-	return err
+	return nil
 }
 
 func deriveDelimiters(numbers string) (*regexp.Regexp, string) {

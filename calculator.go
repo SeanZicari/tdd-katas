@@ -14,7 +14,6 @@ func Add(numbers string) (int, error) {
 
 func sumNumbers(nums []string) (int, error) {
 	var negatives []string
-	var err error
 
 	sum := 0
 	for _, numStr := range nums {
@@ -28,10 +27,12 @@ func sumNumbers(nums []string) (int, error) {
 		sum += num
 	}
 
-	return sum, errIfNegatives(negatives, err)
+	return sum, errIfNegatives(negatives)
 }
 
-func errIfNegatives(negatives []string, err error) error {
+func errIfNegatives(negatives []string) error {
+	var err error
+
 	if len(negatives) > 0 {
 		err = fmt.Errorf("negative numbers not allowed: %s", strings.Join(negatives, ", "))
 	}

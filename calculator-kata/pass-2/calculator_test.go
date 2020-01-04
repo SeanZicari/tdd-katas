@@ -2,10 +2,6 @@ package calculator
 
 import (
 	"errors"
-	"fmt"
-	"regexp"
-	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -101,37 +97,3 @@ func TestAdd_MultipleCustomDelimitersOk(t *testing.T) {
 	}
 }
 
-func Add(s string) (int, error) {
-	var err error
-	var negatives []string
-	var delimiters []string
-	sum := 0
-
-	for _, line := range strings.Split(s, "\n") {
-		if strings.HasPrefix(line, "//") {
-			for _, match := range regexp.MustCompile(`[^/\[\]]+`).FindAllString(line, -1) {
-				delimiters = append(delimiters, regexp.QuoteMeta(match))
-			}
-			//continue  - Test passes without this, but line is later split for no reason
-		} else {
-			delimiters = append(delimiters, ",")
-		}
-		for _, numStr := range regexp.MustCompile(strings.Join(delimiters, "|")).Split(line, -1) {
-			num, _ := strconv.Atoi(numStr)
-			if num > 1000 {
-				continue
-			}
-			if num < 0 {
-				negatives = append(negatives, numStr)
-				//continue  - Works without but makes no sense to sum when we know we've failed
-			}
-			sum += num
-		}
-	}
-
-	if len(negatives) > 0 {
-		err = fmt.Errorf("negatives not allowed: %s", strings.Join(negatives, ", "))
-	}
-
-	return sum, err
-}

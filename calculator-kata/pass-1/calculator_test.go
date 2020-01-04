@@ -1,4 +1,4 @@
-package string_calculator_kata
+package calculator
 
 import (
 	assert2 "github.com/stretchr/testify/assert"

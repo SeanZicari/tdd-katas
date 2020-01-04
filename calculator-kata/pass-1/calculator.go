@@ -1,4 +1,4 @@
-package string_calculator_kata
+package calculator
 
 import (
 	"fmt"
